@@ -66,11 +66,8 @@ Files: `SerialLibrary.py` (library) + `serial_test.robot` (test).
 ```robot
 *** Settings ***
 Library           SerialLibrary.py
-Suite Setup       Open Connection    ${PORT}
+Suite Setup       Open Connection
 Suite Teardown    Close Connection
-
-*** Variables ***
-${PORT}           /dev/ttyACM0
 
 *** Test Cases ***
 Hello Command Works
@@ -111,12 +108,6 @@ rebot --outputdir regenerated output.xml
 
 # combine two runs
 rebot --outputdir combined run1/output.xml run2/output.xml
-```
-
-## Use a different port without editing the file
-
-```bash
-robot --variable PORT:/dev/ttyACM1 serial_test.robot
 ```
 
 ## Write your own library
