@@ -1,94 +1,155 @@
-# Robot Framework Testbench
+# Robot Framework — Simple Guide
 
-Simple Robot Framework project that tests an ESP32-S3 Mini running the
-Zephyr testbench firmware. It talks to the board over the serial port
-(USB Serial/JTAG) using a small Python library.
+A minimal, general introduction to **Robot Framework**: what it is, how it
+works, and how to run your first test. The serial/ESP32 example is only an
+illustration — the same ideas apply to any system you can drive from Python.
 
-## What is this?
+## What is Robot Framework?
 
-- The board runs Zephyr firmware exposing a **shell** (commands: `ping`,
-  `hello`, `gpio`, `adc`, `pwm`, `spi`).
-- This repo contains **Robot Framework tests** that send those commands and
-  check the answers.
-- No hardware logic here — just tests + a serial helper library.
+Robot Framework is a generic test automation framework. You write tests in a
+simple, readable keyword syntax; the actual work is done by **libraries**
+(written in Python, Java, ...). Robot Framework runs on your computer and
+calls those libraries.
 
-## Folder layout
+Key points:
+- **Robot Framework runs the tests** (on your laptop/CI).
+- **Libraries do the work** (open serial ports, click buttons, call APIs).
+- **Rebot** is a separate tool that only regenerates/combines reports from
+  saved results — it does not run tests.
+
+## How it works
 
 ```
-.
-├── config/testbench.yaml   # port, baudrate, timeout
-├── EspSerial.py            # serial helper (reads config)
-├── shell_test.robot        # smallest possible test
-└── requirements.txt
+robot test.robot
+        |
+        v
+  [Robot Framework]  --imports-->  [Python library]  --talks to-->  [system under test]
+        |
+        v
+   report.html / log.html / output.xml
 ```
 
-## Requirements
+Flow for one test file:
 
-- Python 3.10+
-- A board flashed with the testbench firmware
-- USB cable to the ESP32-S3 Mini (port `/dev/ttyACM0`)
+1. Import libraries → discover their keywords.
+2. Run `Suite Setup` (once for the whole suite).
+3. Run each test case (keywords in order).
+4. Run `Suite Teardown`.
+
+If suite setup fails, the tests are skipped, but teardown still runs.
+
+## Keyword matching
+
+Robot Framework matches a keyword name to a Python method by ignoring
+spaces, underscores, and case:
+
+- `Open Connection`  ->  `open_connection`
+- `Command Should Return`  ->  `command_should_return`
+
+So a method `def command_should_return(self, ...)` becomes the keyword
+`Command Should Return`.
 
 ## Install
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install robotframework pyserial pyyaml
 ```
 
-## Configure
+## A minimal example
 
-Edit `config/testbench.yaml`:
+Files: `EspSerial.py` (library) + `shell_test.robot` (test).
 
-```yaml
-testbench:
-  port: /dev/ttyACM0
-  baudrate: 115200
-  timeout: 2.0
-  prompt: "tb:~$"
+`shell_test.robot`:
+
+```robot
+*** Settings ***
+Library           EspSerial.py
+Suite Setup       Open Connection    ${PORT}
+Suite Teardown    Close Connection
+
+*** Variables ***
+${PORT}           /dev/ttyACM0
+
+*** Test Cases ***
+Hello Command Works
+    Command Should Return    hello    Hello from device!
 ```
 
-## Run
-
-```bash
-# all tests
-robot tests/
-
-# one group
-robot tests/gpio/
-
-# with a report folder
-robot --outputdir results/ tests/
-
-# open report (Linux)
-xdg-open results/report.html
-```
-
-## Simple example (hello)
-
-The smallest possible test is in `shell_test.robot` + `EspSerial.py`:
-
-1. Flash the firmware (which provides the `hello` command).
-2. Close any serial monitor.
-3. Run:
+Run:
 
 ```bash
 robot shell_test.robot
 ```
 
-Expected: `ESP32 Hello Command Works` passes and the report shows `Hello from ESP32-S3!`.
+Robot Framework will:
+1. Import `EspSerial.py` and discover its keywords.
+2. Run `Open Connection    /dev/ttyACM0`.
+3. Run `Command Should Return    hello    Hello from device!`.
+4. Run `Close Connection`.
 
-## Troubleshooting
+## Results
 
-| Problem | Fix |
-|---|---|
-| `Permission denied: /dev/ttyACM0` | `sudo usermod -a -G dialout $USER`, then re-login |
-| No reply / timeout | Check cable, reflash firmware, wait 2s after connect |
-| `ERR 1` | Unknown command — check spelling/case |
-| `ERR 2` | Bad arguments |
+After a run you get:
 
-## Related
+```
+output.xml   # machine-readable results
+log.html     # detailed log
+report.html  # pass/fail summary
+```
 
-- Firmware repo: https://github.com/Mohamed100100/ITI-Zephyr-Testbench-ESP32S3
+Open `report.html` in a browser.
+
+## Re-run / combine reports with Rebot
+
+Rebot does NOT run tests; it only processes saved results:
+
+```bash
+# regenerate reports
+rebot --outputdir regenerated output.xml
+
+# combine two runs
+rebot --outputdir combined run1/output.xml run2/output.xml
+```
+
+## Use a different port without editing the file
+
+```bash
+robot --variable PORT:/dev/ttyACM1 shell_test.robot
+```
+
+## Write your own library
+
+A library is just a Python class. Each method becomes a keyword:
+
+```python
+class MyLib:
+    def do_something(self, arg):
+        ...
+        return result
+```
+
+```robot
+*** Settings ***
+Library    MyLib.py
+
+*** Test Cases ***
+My Test
+    ${r}=    Do Something    value
+    Should Be Equal    ${r}    expected
+```
+
+## Tips
+
+- Use at least two spaces between columns in `.robot` files.
+- `Suite Setup` runs once per suite; use `Test Setup` for per-test setup.
+- If suite setup fails, tests are skipped but teardown still runs.
+- Close other serial monitors before running serial tests.
+
+## References
+
+- Robot Framework user guide: https://robotframework.org/robotframework/
+- pySerial: https://pyserial.readthedocs.io/
 EOF
 echo done
