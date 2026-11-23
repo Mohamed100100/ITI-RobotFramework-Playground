@@ -1,10 +1,7 @@
 *** Settings ***
 Library           SerialLibrary.py
-Suite Setup       Open Connection    ${PORT}
+Suite Setup       Open Connection
 Suite Teardown    Close Connection
-
-*** Variables ***
-${PORT}           /dev/ttyACM0
 
 *** Test Cases ***
 Hello Command Works
