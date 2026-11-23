@@ -86,6 +86,35 @@ Robot Framework will:
 3. Run `Command Should Return    hello    Hello from device!`.
 4. Run `Close Connection`.
 
+## Line-by-line: what each test line does
+
+```robot
+*** Settings ***
+Library           SerialLibrary.py
+Suite Setup       Open Connection
+Suite Teardown    Close Connection
+
+*** Test Cases ***
+Hello Command Works
+    Command Should Return    hello    Hello from device!
+```
+
+| Test line | What Robot does | Python call |
+|---|---|---|
+| `Library SerialLibrary.py` | Imports the library; discovers its methods as keywords | `SerialLibrary()` constructor (reads `config.yaml`) |
+| `Suite Setup Open Connection` | Runs once before all tests | `open_connection()` (no args → uses config port/baud) |
+| `Suite Teardown Close Connection` | Runs once after all tests | `close_connection()` |
+| `Hello Command Works` | Test case name | — |
+| `Command Should Return    hello    Hello from device!` | Calls keyword with 2 args | `command_should_return("hello", "Hello from device!")` |
+
+Inside `command_should_return`:
+1. Clears input buffer.
+2. Writes `"hello\r"` to the serial port.
+3. Reads until `"Hello from device!"` appears or timeout.
+4. Returns the text, or raises `AssertionError`.
+
+So each test line maps directly to one Python method call.
+
 ## Results
 
 After a run you get:
