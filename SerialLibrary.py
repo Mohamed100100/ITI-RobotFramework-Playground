@@ -6,7 +6,7 @@ import yaml
 class SerialLibrary:
     ROBOT_LIBRARY_SCOPE = "SUITE"
 
-    def __init__(self, config_path="config/testbench.yaml"):
+    def __init__(self, config_path="testbench.yaml"):
         with open(config_path) as f:
             cfg = yaml.safe_load(f)["testbench"]
         self.port_name = cfg["port"]
