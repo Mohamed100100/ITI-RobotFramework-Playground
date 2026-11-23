@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.5.1 (Python 3.12.13 on linux)" generated="2026-11-23T17:51:08.439937" rpa="false" schemaversion="5">
+<suite id="s1" name="Shell Test" source="/media/gemy/Linux_Workspace/ITI/Zypher_WS/ITI-RobotFramework-Playground/shell_test.robot">
+<kw name="Open Connection" owner="EspSerial" type="SETUP">
+<arg>${PORT}</arg>
+<status status="NOT RUN" start="2026-11-23T17:51:08.473593" elapsed="0.000078"/>
+</kw>
+<test id="s1-t1" name="ESP32 Hello Command Works" line="10">
+<kw name="Command Should Return" owner="EspSerial">
+<arg>hello</arg>
+<arg>Hello from ESP32-S3!</arg>
+<status status="NOT RUN" start="2026-11-23T17:51:08.474057" elapsed="0.000057"/>
+</kw>
+<status status="PASS" start="2026-11-23T17:51:08.473776" elapsed="0.000429"/>
+</test>
+<kw name="Close Connection" owner="EspSerial" type="TEARDOWN">
+<status status="NOT RUN" start="2026-11-23T17:51:08.474508" elapsed="0.000035"/>
+</kw>
+<status status="PASS" start="2026-11-23T17:51:08.440569" elapsed="0.033999"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Shell Test" id="s1" pass="1" fail="0" skip="0">Shell Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>

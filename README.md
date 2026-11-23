@@ -16,12 +16,9 @@ Zephyr testbench firmware. It talks to the board over the serial port
 
 ```
 .
-├── config/testbench.yaml         # port, baudrate, timeout, prompt
-├── libraries/TestbenchLibrary.py # serial helper (used by tests/)
-├── resources/common.resource     # shared keywords
-├── tests/                        # test suites
-├── EspSerial.py                  # simple serial helper (tutorial example)
-├── shell_test.robot              # smallest possible test
+├── config/testbench.yaml   # port, baudrate, timeout
+├── EspSerial.py            # serial helper (reads config)
+├── shell_test.robot        # smallest possible test
 └── requirements.txt
 ```
 
@@ -80,26 +77,6 @@ robot shell_test.robot
 ```
 
 Expected: `ESP32 Hello Command Works` passes and the report shows `Hello from ESP32-S3!`.
-
-## Write your own test
-
-1. Add a new `.robot` file under `tests/`.
-2. Import the shared resource:
-
-```robot
-*** Settings ***
-Resource    ../resources/common.resource
-Suite Setup       Connect
-Suite Teardown    Disconnect
-
-*** Test Cases ***
-My Test
-    ${resp}=    Send Command    ping
-    Should Contain    ${resp}    PONG
-```
-
-3. Use `Send Command`, `Expect Ok`, `Expect Val` keywords.
-4. Run with `robot tests/`.
 
 ## Troubleshooting
 
