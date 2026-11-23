@@ -173,3 +173,35 @@ My Test
 - pySerial: https://pyserial.readthedocs.io/
 EOF
 echo done
+## Cheat sheet
+
+```bash
+# install
+python3 -m venv .venv && source .venv/bin/activate
+pip install robotframework pyserial pyyaml
+
+# run
+robot serial_test.robot            # one file
+robot .                           # all tests in folder
+robot --outputdir results/ .      # with report folder
+robot --variable PORT:/dev/ttyACM1 serial_test.robot  # override port
+
+# reports
+rebot --outputdir regenerated output.xml
+rebot --outputdir combined run1/output.xml run2/output.xml
+
+# lint / dry run
+robot --dryrun serial_test.robot
+```
+
+```robot
+# minimal test
+*** Settings ***
+Library           SerialLibrary.py
+Suite Setup       Open Connection
+Suite Teardown    Close Connection
+
+*** Test Cases ***
+Hello Command Works
+    Command Should Return    hello    Hello from device!
+```
