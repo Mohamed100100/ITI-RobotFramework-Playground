@@ -59,13 +59,13 @@ pip install robotframework pyserial pyyaml
 
 ## A minimal example
 
-Files: `EspSerial.py` (library) + `shell_test.robot` (test).
+Files: `SerialLibrary.py` (library) + `serial_test.robot` (test).
 
-`shell_test.robot`:
+`serial_test.robot`:
 
 ```robot
 *** Settings ***
-Library           EspSerial.py
+Library           SerialLibrary.py
 Suite Setup       Open Connection    ${PORT}
 Suite Teardown    Close Connection
 
@@ -80,11 +80,11 @@ Hello Command Works
 Run:
 
 ```bash
-robot shell_test.robot
+robot serial_test.robot
 ```
 
 Robot Framework will:
-1. Import `EspSerial.py` and discover its keywords.
+1. Import `SerialLibrary.py` and discover its keywords.
 2. Run `Open Connection    /dev/ttyACM0`.
 3. Run `Command Should Return    hello    Hello from device!`.
 4. Run `Close Connection`.
@@ -116,7 +116,7 @@ rebot --outputdir combined run1/output.xml run2/output.xml
 ## Use a different port without editing the file
 
 ```bash
-robot --variable PORT:/dev/ttyACM1 shell_test.robot
+robot --variable PORT:/dev/ttyACM1 serial_test.robot
 ```
 
 ## Write your own library

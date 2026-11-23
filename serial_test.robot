@@ -1,5 +1,5 @@
 *** Settings ***
-Library           EspSerial.py
+Library           SerialLibrary.py
 Suite Setup       Open Connection    ${PORT}
 Suite Teardown    Close Connection
 
@@ -7,5 +7,5 @@ Suite Teardown    Close Connection
 ${PORT}           /dev/ttyACM0
 
 *** Test Cases ***
-ESP32 Hello Command Works
-    Command Should Return    hello    Hello from ESP32-S3!
+Hello Command Works
+    Command Should Return    hello    Hello from device!

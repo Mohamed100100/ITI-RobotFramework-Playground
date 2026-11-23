@@ -3,7 +3,7 @@ import serial
 import yaml
 
 
-class EspSerial:
+class SerialLibrary:
     ROBOT_LIBRARY_SCOPE = "SUITE"
 
     def __init__(self, config_path="config/testbench.yaml"):
